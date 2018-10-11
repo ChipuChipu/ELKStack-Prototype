@@ -30,12 +30,12 @@ public class UDPThreaded
  
         Debug.Log("Set sendee at ip " + sendIp + " and port " + sendPort);
  
-        StartReceiveThread();
+    //    StartReceiveThread();
     }
  
     private void StartReceiveThread()
     {
-        receiveThread = new Thread(() => ListenForMessages(udpClient));
+       receiveThread = new Thread(() => ListenForMessages(udpClient));
         receiveThread.IsBackground = true;
         threadRunning = true;
         receiveThread.Start();
@@ -98,7 +98,7 @@ public class UDPThreaded
     public void Stop()
     {
         threadRunning = false;
-        receiveThread.Abort();
+        //receiveThread.Abort();
         udpClient.Close();
     }
 
