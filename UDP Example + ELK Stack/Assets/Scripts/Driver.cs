@@ -9,8 +9,8 @@ public class Driver : MonoBehaviour
     void Start()
     {
         string sendIp = "127.0.0.1";
-        int sendPort = 9200;
-        int receivePort = 5960;
+        int sendPort = 8088;
+        int receivePort = 10001;
 
         connection = new UDPThreaded();
         connection.StartConnection(sendIp, sendPort, receivePort);
@@ -18,9 +18,9 @@ public class Driver : MonoBehaviour
 
     void Update()
     {
-       // foreach (var message in connection.getMessages()) Debug.Log(message);
+        //foreach (var message in connection.getMessages()) Debug.Log(message);
 
-       connection.Send("Hi!");
+        connection.Send("Hi!");
     }
 
     void OnDestroy()

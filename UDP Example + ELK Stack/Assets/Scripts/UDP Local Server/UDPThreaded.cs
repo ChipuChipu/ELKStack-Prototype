@@ -5,9 +5,21 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using UnityEngine;
- 
-public class UDPThreaded
+
+/*
+    Singleton Pattern is creating Warning logs
+        - Trying to use NEW in a non-Monobehaviour environment
+*/
+public class UDPThreaded : Singleton<DataAnalytics>
 {
+    #region Singleton Initialization
+    [RuntimeInitializeOnLoadMethodAttribute(RuntimeInitializeLoadType.AfterSceneLoad)]
+    public static void InitializeStructure()
+    {
+        InitializeSingleton();
+    }
+    #endregion
+
     private UdpClient udpClient;
  
     private readonly Queue<string> incomingQueue = new Queue<string>();
@@ -30,12 +42,12 @@ public class UDPThreaded
  
         Debug.Log("Set sendee at ip " + sendIp + " and port " + sendPort);
  
-    //    StartReceiveThread();
+        //StartReceiveThread();
     }
  
     private void StartReceiveThread()
     {
-       receiveThread = new Thread(() => ListenForMessages(udpClient));
+        receiveThread = new Thread(() => ListenForMessages(udpClient));
         receiveThread.IsBackground = true;
         threadRunning = true;
         receiveThread.Start();
