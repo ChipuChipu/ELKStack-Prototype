@@ -12,8 +12,9 @@ using UnityEngine;
                 - If Ping.Time == -1, a TimeOut event occured
 */
 
-public class DataAnalytics : Singleton<DataAnalytics>, DataAnalyticsInterface
+public class DataAnalytics : MonoBehaviour, DataAnalyticsInterface
 {
+    /*
     #region Singleton Initialization
     [RuntimeInitializeOnLoadMethodAttribute(RuntimeInitializeLoadType.AfterSceneLoad)]
     public static void InitializeStructure()
@@ -21,22 +22,23 @@ public class DataAnalytics : Singleton<DataAnalytics>, DataAnalyticsInterface
         InitializeSingleton();
     }
     #endregion
+    */
 
     #region General Initialization
     // Log Creation Variables
-    Queue<string> logList;
+    private Queue<string> logList;
     bool hasConnection;
     bool postRequest;
 
     // UDP Variables
     UDPThreaded connection;
     string sendIp = "127.0.0.1";
-    int sendPort = 8088;
+    int sendPort = 9200;
     int receivePort = 10000;
     #endregion
 
     #region Constructor
-    DataAnalytics()
+    public DataAnalytics()
     {
         logList = new Queue<string>();
         connection = new UDPThreaded();
@@ -47,18 +49,54 @@ public class DataAnalytics : Singleton<DataAnalytics>, DataAnalyticsInterface
     }
     #endregion
 
-    #region Start
-    void Start()
+    #region Setters and Getters
+    #region getLogListCount
+    public int getLogListCount()
     {
-        StartCoroutine(testConnection());
+        try
+        {
+            return logList.Count;
+        }
+
+        catch
+        {
+            Debug.Log("LogList is null");
+            return -1;
+        }
     }
     #endregion
 
+    #region getIP
+    public string getIP() { return sendIp; }
+    #endregion
+
+    #region getSendPort
+    public int getSendPort() {return sendPort; }
+    #endregion
+
+    #region getReceivePort
+    public int getReceivePort() { return receivePort; }
+    #endregion
+
+    #region getConnectedState
+    public bool getConnectedState() { return hasConnection; }
+    #endregion
+
+    #region getPostRequestState
+    public bool getPostRequestState() { return postRequest; }
+    #endregion
+
+    #region setPostRequest
+    public void setPostRequest(bool state) { postRequest = state; }
+    #endregion
+    #endregion
+
     #region IEnumerator testConnection
-    IEnumerator testConnection()
+    public IEnumerator testConnection()
     {
+        Debug.Log("DA-testConnection");
         hasConnection = pingConnection();
-        yield return new WaitForSeconds(45);
+        yield return new WaitForSeconds(1);
     }
     #endregion
 
@@ -68,6 +106,7 @@ public class DataAnalytics : Singleton<DataAnalytics>, DataAnalyticsInterface
     */
     bool pingConnection()
     {
+        Debug.Log("DA-pingConnection() - Testing Connection");
         Ping newPing = new Ping("127.0.0.1");
         int maxTries = 10;
 
@@ -120,7 +159,7 @@ public class DataAnalytics : Singleton<DataAnalytics>, DataAnalyticsInterface
     */
     public void PostAllLogs()
     {
-        if (postRequest && hasConnection)
+        if (postRequest && hasConnection && logList != null && logList.Count >= 1)
         {
             while (logList.Count > 0 && connection != null)
             {
@@ -129,4 +168,12 @@ public class DataAnalytics : Singleton<DataAnalytics>, DataAnalyticsInterface
         }
     }
     #endregion
+
+    #region OnDestroy
+    void OnDestroy()
+    {
+        connection.Stop();
+    }
+    #endregion
+
 }

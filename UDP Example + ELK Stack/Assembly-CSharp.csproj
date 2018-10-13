@@ -61,7 +61,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Driver.cs" />
+    <Compile Include="Assets\Scripts\LogStash\DataAnalytics.cs" />
+    <Compile Include="Assets\Scripts\LogStash\DataAnalyticsInterface.cs" />
+    <Compile Include="Assets\Scripts\LogStash\Singleton.cs" />
+    <Compile Include="Assets\Scripts\LogStashDriver.cs" />
+    <Compile Include="Assets\Scripts\UDP Local Server\UDPDriver.cs" />
     <Compile Include="Assets\Scripts\UDP Local Server\UDPThreaded.cs" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>C:/Users/Joshu/Documents/GitHub/ELKStack-Prototype/UDP Example + ELK Stack/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>

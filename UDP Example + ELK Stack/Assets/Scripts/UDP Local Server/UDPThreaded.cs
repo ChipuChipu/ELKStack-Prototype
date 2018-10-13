@@ -6,12 +6,9 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 
-/*
-    Singleton Pattern is creating Warning logs
-        - Trying to use NEW in a non-Monobehaviour environment
-*/
-public class UDPThreaded : Singleton<DataAnalytics>
+public class UDPThreaded
 {
+    /*
     #region Singleton Initialization
     [RuntimeInitializeOnLoadMethodAttribute(RuntimeInitializeLoadType.AfterSceneLoad)]
     public static void InitializeStructure()
@@ -19,15 +16,21 @@ public class UDPThreaded : Singleton<DataAnalytics>
         InitializeSingleton();
     }
     #endregion
-
+    */
     private UdpClient udpClient;
- 
-    private readonly Queue<string> incomingQueue = new Queue<string>();
+
+    public readonly Queue<string> incomingQueue;
     Thread receiveThread;
-    private bool threadRunning = false;
+    private bool threadRunning;
     private string senderIp;
     private int senderPort;
- 
+
+    public UDPThreaded()
+    {
+        incomingQueue = new Queue<string>();
+        threadRunning = false;
+    }
+
     public void StartConnection(string sendIp, int sendPort, int receivePort)
     {
         try { udpClient = new UdpClient(receivePort); }
@@ -102,9 +105,17 @@ public class UDPThreaded : Singleton<DataAnalytics>
     public void Send(string message)
     {
         Debug.Log(String.Format("Send msg to ip:{0} port:{1} msg:{2}",senderIp,senderPort,message));
-        IPEndPoint serverEndpoint = new IPEndPoint(IPAddress.Parse(senderIp), senderPort);
-        Byte[] sendBytes = Encoding.UTF8.GetBytes(message);
-        udpClient.Send(sendBytes, sendBytes.Length, serverEndpoint);
+        try
+        {
+            IPEndPoint serverEndpoint = new IPEndPoint(IPAddress.Parse(senderIp), senderPort);
+            Byte[] sendBytes = Encoding.UTF8.GetBytes(message);
+            udpClient.Send(sendBytes, sendBytes.Length, serverEndpoint);
+        }
+        catch
+        {
+            Debug.Log("failed parameter: " + senderIp + " " + senderPort);
+        }
+
     }
  
     public void Stop()
