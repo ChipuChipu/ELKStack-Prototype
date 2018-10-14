@@ -5,11 +5,11 @@ using UnityEngine;
 public class LogStashDriver : MonoBehaviour
 {
     private DataAnalytics da;
-    string firstTestMessage = "THIS IS A TEST. HOPEFULLY WE SEE THIS ON THE LOGSTASH FEED.";
+    readonly string firstTestMessage = "THIS IS A TEST. HOPEFULLY WE SEE THIS ON THE LOGSTASH FEED.";
     List<string> multipleLogEntryExample = new List<string>();
 
     void Start()
-    { 
+    {
         multipleLogEntryExample.Add("This");
         multipleLogEntryExample.Add("serves");
         multipleLogEntryExample.Add("As");
@@ -21,17 +21,17 @@ public class LogStashDriver : MonoBehaviour
         multipleLogEntryExample.Add("Sending");
 
         da = new DataAnalytics();   
-        da.setPostRequest(true);        // Mimic the send logs button from the User
+        da.SetPostRequest(true);        // Mimic the send logs button from the User
         StartConnectionChecks();
     }
 
     private void Update()
     {
-        if (da.getConnectedState())
+        if (da.GetConnectedState())
         {
             Debug.Log("We are Connected");
             da.AddLog(firstTestMessage);
-            da.addLogList(multipleLogEntryExample);
+            da.AddLogList(multipleLogEntryExample);
             da.AddLog("I THINK IT WORKED?");
 
             da.PostAllLogs();
@@ -43,7 +43,7 @@ public class LogStashDriver : MonoBehaviour
     #region void StartConnectChecks
     public void StartConnectionChecks()
     {
-        StartCoroutine(da.testConnection());
+        StartCoroutine(da.TestConnection());
         Debug.Log("Coroutine started...");
     }
     #endregion

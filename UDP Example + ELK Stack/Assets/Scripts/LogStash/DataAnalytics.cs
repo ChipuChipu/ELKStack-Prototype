@@ -12,9 +12,8 @@ using UnityEngine;
                 - If Ping.Time == -1, a TimeOut event occured
 */
 
-public class DataAnalytics : MonoBehaviour, DataAnalyticsInterface
+public class DataAnalytics : Singleton<DataAnalytics>, DataAnalyticsInterface
 {
-    /*
     #region Singleton Initialization
     [RuntimeInitializeOnLoadMethodAttribute(RuntimeInitializeLoadType.AfterSceneLoad)]
     public static void InitializeStructure()
@@ -22,16 +21,32 @@ public class DataAnalytics : MonoBehaviour, DataAnalyticsInterface
         InitializeSingleton();
     }
     #endregion
-    */
-
+   
     #region General Initialization
     // Log Creation Variables
-    private Queue<string> logList;
-    bool hasConnection;
-    bool postRequest;
+    private Queue<string> _logList;
+    static private Queue<string> LogList
+    {
+        get { return Instance._logList; }
+        set
+        {
+            Instance._logList = value;
+        }
+    }
+    private bool hasConnection;
+    private bool postRequest;
+    private readonly int pingIntervalCheckTime = 45;
 
     // UDP Variables
-    UDPThreaded connection;
+    private UDPThreaded _connection;
+    static private UDPThreaded Connection
+    {
+        get { return Instance._connection; }
+        set
+        {
+            Instance._connection = value;
+        }
+    }
     string sendIp = "127.0.0.1";
     int sendPort = 9200;
     int receivePort = 10000;
@@ -40,9 +55,9 @@ public class DataAnalytics : MonoBehaviour, DataAnalyticsInterface
     #region Constructor
     public DataAnalytics()
     {
-        logList = new Queue<string>();
-        connection = new UDPThreaded();
-        connection.StartConnection(sendIp, sendPort, receivePort);
+        _logList = new Queue<string>();
+        _connection = new UDPThreaded();
+        _connection.StartConnection(sendIp, sendPort, receivePort);
 
         hasConnection = false;
         postRequest = false;
@@ -50,12 +65,12 @@ public class DataAnalytics : MonoBehaviour, DataAnalyticsInterface
     #endregion
 
     #region Setters and Getters
-    #region getLogListCount
-    public int getLogListCount()
+    #region GetLogListCount
+    public int GetLogListCount()
     {
         try
         {
-            return logList.Count;
+            return _logList.Count;
         }
 
         catch
@@ -66,45 +81,45 @@ public class DataAnalytics : MonoBehaviour, DataAnalyticsInterface
     }
     #endregion
 
-    #region getIP
-    public string getIP() { return sendIp; }
+    #region GetIP
+    public string GetIP() { return sendIp; }
     #endregion
 
-    #region getSendPort
-    public int getSendPort() {return sendPort; }
+    #region GetSendPort
+    public int GetSendPort() {return sendPort; }
     #endregion
 
-    #region getReceivePort
-    public int getReceivePort() { return receivePort; }
+    #region GetReceivePort
+    public int GetReceivePort() { return receivePort; }
     #endregion
 
-    #region getConnectedState
-    public bool getConnectedState() { return hasConnection; }
+    #region GetConnectedState
+    public bool GetConnectedState() { return hasConnection; }
     #endregion
 
-    #region getPostRequestState
-    public bool getPostRequestState() { return postRequest; }
+    #region GetPostRequestState
+    public bool GetPostRequestState() { return postRequest; }
     #endregion
 
-    #region setPostRequest
-    public void setPostRequest(bool state) { postRequest = state; }
+    #region SetPostRequest
+    public void SetPostRequest(bool state) { postRequest = state; }
     #endregion
     #endregion
 
-    #region IEnumerator testConnection
-    public IEnumerator testConnection()
+    #region IEnumerator TestConnection
+    public IEnumerator TestConnection()
     {
         Debug.Log("DA-testConnection");
-        hasConnection = pingConnection();
-        yield return new WaitForSeconds(1);
+        hasConnection = PingConnection();
+        yield return new WaitForSeconds(pingIntervalCheckTime);
     }
     #endregion
 
-    #region bool pingConnection
+    #region bool PingConnection
     /*
         This function will return a boolean value depending on the success of a ping to the server.
     */
-    bool pingConnection()
+    bool PingConnection()
     {
         Debug.Log("DA-pingConnection() - Testing Connection");
         Ping newPing = new Ping("127.0.0.1");
@@ -123,7 +138,7 @@ public class DataAnalytics : MonoBehaviour, DataAnalyticsInterface
     }
     #endregion
 
-    #region void addLog
+    #region void AddLog
     /*
         This function will allow for a single log to be added onto the logList.
         This is an overloaded function that allows for an additional step to occur by the
@@ -131,22 +146,22 @@ public class DataAnalytics : MonoBehaviour, DataAnalyticsInterface
     */
     public void AddLog(string log)
     {
-        if (logList != null && log != null)
-            logList.Enqueue(log);
+        if (_logList != null && log != null)
+            _logList.Enqueue(log);
     }
     #endregion
 
-    #region void addLogList
+    #region void AddLogList
     /*
         This function allows for a list of logs to be added onto the logList.
     */
-    public void addLogList(List<string> list)
+    public void AddLogList(List<string> list)
     {
-        if (logList != null && list != null)
+        if (_logList != null && list != null)
         {
             foreach (string temp in list)
             {
-                logList.Enqueue(temp);
+                _logList.Enqueue(temp);
             }
         }
     }
@@ -159,11 +174,11 @@ public class DataAnalytics : MonoBehaviour, DataAnalyticsInterface
     */
     public void PostAllLogs()
     {
-        if (postRequest && hasConnection && logList != null && logList.Count >= 1)
+        if (postRequest && hasConnection && _logList != null && _logList.Count >= 1)
         {
-            while (logList.Count > 0 && connection != null)
+            while (_logList.Count > 0 && _connection != null)
             {
-                connection.Send(logList.Dequeue());
+                _connection.Send(_logList.Dequeue());
             }
         }
     }
@@ -172,7 +187,7 @@ public class DataAnalytics : MonoBehaviour, DataAnalyticsInterface
     #region OnDestroy
     void OnDestroy()
     {
-        connection.Stop();
+        _connection.Stop();
     }
     #endregion
 

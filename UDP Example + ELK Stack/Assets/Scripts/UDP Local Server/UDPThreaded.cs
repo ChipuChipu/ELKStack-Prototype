@@ -122,7 +122,22 @@ public class UDPThreaded
     {
         threadRunning = false;
         //receiveThread.Abort();
-        udpClient.Close();
+
+        /* DEBUG - Error Report on NullReference for udpClient.Close()
+           Design Notes:
+            Garbage Collector is being called in removing udpClient.
+            Behavior will be similar in OnApplicationQuit()
+        */
+        try
+        {
+            udpClient.Close();
+        }
+        catch
+        {
+            if (udpClient == null)
+                Debug.Log("udpClient is null + threadRunning is" + threadRunning);
+            // reports: udpClient is null + threadRunning isFalse
+        }
     }
 
     void OnApplicationQuit()
