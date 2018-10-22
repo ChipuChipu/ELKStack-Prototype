@@ -19,15 +19,14 @@ public class LogStashDriver : MonoBehaviour
         multipleLogEntryExample.Add("Batched");
         multipleLogEntryExample.Add("Log");
         multipleLogEntryExample.Add("Sending");
-
-        da = new DataAnalytics();   
-        da.SetPostRequest(true);        // Mimic the send logs button from the User
+        
+        DataAnalytics.SetPostRequest(true);        // Mimic the send logs button from the User
         StartConnectionChecks();
     }
 
     private void Update()
     {
-        if (da.GetConnectedState())
+        if (DataAnalytics.GetConnectedState())
         {
             Debug.Log("We are Connected");
             da.AddLog(firstTestMessage);

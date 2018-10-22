@@ -33,9 +33,9 @@ public class DataAnalytics : Singleton<DataAnalytics>, DataAnalyticsInterface
             Instance._logList = value;
         }
     }
-    private bool hasConnection;
-    private bool postRequest;
-    private readonly int pingIntervalCheckTime = 45;
+    private static bool hasConnection;
+    private static bool postRequest;
+    private static readonly int pingIntervalCheckTime = 45;
 
     // UDP Variables
     private UDPThreaded _connection;
@@ -47,13 +47,13 @@ public class DataAnalytics : Singleton<DataAnalytics>, DataAnalyticsInterface
             Instance._connection = value;
         }
     }
-    string sendIp = "127.0.0.1";
-    int sendPort = 9200;
-    int receivePort = 10000;
+    private static string sendIp = "127.0.0.1";
+    private static int sendPort = 9200;
+    private static int receivePort = 10000;
     #endregion
 
-    #region Constructor
-    public DataAnalytics()
+    #region Awake()
+    private void Awake()
     {
         _logList = new Queue<string>();
         _connection = new UDPThreaded();
@@ -82,27 +82,27 @@ public class DataAnalytics : Singleton<DataAnalytics>, DataAnalyticsInterface
     #endregion
 
     #region GetIP
-    public string GetIP() { return sendIp; }
+    public static string GetIP() { return sendIp; }
     #endregion
 
     #region GetSendPort
-    public int GetSendPort() {return sendPort; }
+    public static int GetSendPort() {return sendPort; }
     #endregion
 
     #region GetReceivePort
-    public int GetReceivePort() { return receivePort; }
+    public static int GetReceivePort() { return receivePort; }
     #endregion
 
     #region GetConnectedState
-    public bool GetConnectedState() { return hasConnection; }
+    public static bool GetConnectedState() { return hasConnection; }
     #endregion
 
     #region GetPostRequestState
-    public bool GetPostRequestState() { return postRequest; }
+    public static bool GetPostRequestState() { return postRequest; }
     #endregion
 
     #region SetPostRequest
-    public void SetPostRequest(bool state) { postRequest = state; }
+    public static void SetPostRequest(bool state) { postRequest = state; }
     #endregion
     #endregion
 
@@ -119,7 +119,7 @@ public class DataAnalytics : Singleton<DataAnalytics>, DataAnalyticsInterface
     /*
         This function will return a boolean value depending on the success of a ping to the server.
     */
-    bool PingConnection()
+    private bool PingConnection()
     {
         Debug.Log("DA-pingConnection() - Testing Connection");
         Ping newPing = new Ping("127.0.0.1");

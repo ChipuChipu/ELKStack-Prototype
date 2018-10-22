@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.IO;
 
 /*
     THINGS-TO-DO:
@@ -21,7 +22,8 @@ public class LogStructure : Singleton<LogStructure>
     #endregion
 
     #region Initialization
-    public static string filePath = "C:\\Users\\Joshu\\Documents\\GitHub\\ELKStack-Prototype\\Log Dump\\" + "ErrorLog -- " + DateTime.UtcNow.Date + ".txt";
+    public static string fileDirectory = "C:\\Users\\Joshu\\Documents\\GitHub\\ELKStack-Prototype\\Log Dump";
+    public static string filePath = fileDirectory + "\\" + "ErrorLog -- " + DateTime.UtcNow.Date + ".txt";
 
     private List<string> _LogList;
     static List<string> LogList
@@ -51,6 +53,14 @@ public class LogStructure : Singleton<LogStructure>
         // Should see if We have Connection. If so, send away. Else, stash it.
         // Should also see if the log dump has entities. If so, fetch and send.
         // Empty all files out of the Log Dump after sending.
+    }
+    #endregion
+
+    #region Helper Functions
+    public static string[] GetAllFilePaths()
+    {
+        Directory.CreateDirectory(fileDirectory);
+        return Directory.GetFiles(fileDirectory, "*.*");
     }
     #endregion
 

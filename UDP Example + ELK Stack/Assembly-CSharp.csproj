@@ -65,8 +65,8 @@
     <Compile Include="Assets\Scripts\Log System\LogStructure.cs" />
     <Compile Include="Assets\Scripts\LogStash\DataAnalytics.cs" />
     <Compile Include="Assets\Scripts\LogStash\DataAnalyticsInterface.cs" />
-    <Compile Include="Assets\Scripts\LogStash\Singleton.cs" />
     <Compile Include="Assets\Scripts\LogStashDriver.cs" />
+    <Compile Include="Assets\Scripts\Singleton.cs" />
     <Compile Include="Assets\Scripts\UDP Local Server\UDPDriver.cs" />
     <Compile Include="Assets\Scripts\UDP Local Server\UDPThreaded.cs" />
     <Reference Include="UnityEditor.StandardEvents">
