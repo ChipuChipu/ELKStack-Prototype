@@ -187,7 +187,7 @@ public class DataAnalytics : Singleton<DataAnalytics>
     #region OnDestroy
     void OnDestroy()
     {
-        _connection.Stop();
+        Connection.Stop();
     }
     #endregion
 
