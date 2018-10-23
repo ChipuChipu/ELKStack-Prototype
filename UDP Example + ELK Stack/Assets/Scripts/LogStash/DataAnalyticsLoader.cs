@@ -19,6 +19,7 @@ public static class DataAnalyticsLoader
             maxTries--;
         }
 
+        //
         Debug.Log("newPing.time: " + newPing.time);
 
         // A ping.Time of -1 is a response for Time Out

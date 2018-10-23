@@ -46,7 +46,6 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
             }
         }
 
-        singletonObject.AddComponent<T>();
+        instance = singletonObject.AddComponent<T>();
     }
-
 }
