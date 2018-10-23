@@ -49,6 +49,7 @@ public class LogStructure : Singleton<LogStructure>
     {
         LogList = LogLoader.GetLocalLogs(LogList);
     }
+
     public static void Log(string log)
     {
         // If there is no Connection, add it to the buffer

@@ -19,31 +19,23 @@ public class LogStashDriver : MonoBehaviour
         multipleLogEntryExample.Add("Batched");
         multipleLogEntryExample.Add("Log");
         multipleLogEntryExample.Add("Sending");
-        
-        DataAnalytics.SetPostRequest(true);        // Mimic the send logs button from the User
-        StartConnectionChecks();
+
+        DataAnalyticsStructure.SetPostRequest(true);        // Mimic the send logs button from the User
+
+        test();
     }
 
     private void Update()
     {
-        if (DataAnalytics.GetConnectedState())
-        {
-            Debug.Log("We are Connected");
-            DataAnalytics.AddLog(firstTestMessage);
-            DataAnalytics.AddLogList(multipleLogEntryExample);
-            DataAnalytics.AddLog("I THINK IT WORKED?");
-
-            DataAnalytics.PostAllLogs();
-        }
-        else
-            Debug.Log("We are not Connected");
+        Debug.Log("Connection Status: " + DataAnalyticsStructure.GetConnectedState());
     }
 
-    #region void StartConnectChecks
-    public void StartConnectionChecks()
+    private void test()
     {
-        StartCoroutine(da.TestConnection());
-        Debug.Log("Coroutine started...");
+        DataAnalyticsStructure.AddLog(firstTestMessage);
+        DataAnalyticsStructure.AddLogList(multipleLogEntryExample);
+        DataAnalyticsStructure.AddLog("I THINK IT WORKED?");
+
+        DataAnalyticsStructure.PostLogs();
     }
-    #endregion
 }
