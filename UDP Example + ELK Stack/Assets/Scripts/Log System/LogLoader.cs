@@ -8,12 +8,6 @@ public static class LogLoader
 
     #region GetLocalLogs()
     // This function tries to find all log files that were previously saved in the past and add onto the current loglist.
-    /*
-     *  Destructive Behavior: It is possible for the log system to delete the current (Today's Log File)
-     *  The Expected Behavior:
-     *      (1) Current or Today's File is deleted (Logs are digitally stored on temporary memory -> LogList)
-     *      (2) New Logs added the same day are added in a newly created "current" log file.
-    */
     public static List<string> GetLocalLogs(List<string> LogList)
     {
         List<string> localList = LogList;
@@ -52,12 +46,16 @@ public static class LogLoader
     #endregion
 
     #region SendLog
-    public static void SendLog(string log)
+    // In the event where connection is false, we save the log onto the list and send it back.
+    public static List<string> SendLog(List<string> LogList, string log)
     {
         if (DataAnalytics.GetConnectedState())
-        {
             DataAnalytics.AddLog(log);
-        }
+
+        else
+            LogList.Add(log);
+
+        return LogList;
     }
     #endregion
 

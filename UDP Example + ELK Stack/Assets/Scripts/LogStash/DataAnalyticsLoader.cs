@@ -10,17 +10,14 @@ public static class DataAnalyticsLoader
     */
     public static bool PingConnection()
     {
-        Debug.Log("DA-pingConnection() - Testing Connection");
+        Debug.Log("DAS-pingConnection() - Testing Connection");
         Ping newPing = new Ping("127.0.0.1");
         int maxTries = 5;
 
-        while (!newPing.isDone && maxTries > 0)
+        while (!newPing.isDone || maxTries > 0)
         {
             maxTries--;
         }
-
-        //
-        Debug.Log("newPing.time: " + newPing.time);
 
         // A ping.Time of -1 is a response for Time Out
         if (newPing.time != -1)

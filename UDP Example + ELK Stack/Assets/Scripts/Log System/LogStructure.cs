@@ -11,6 +11,14 @@ using System.IO;
     (3) Provide additional checks when a valid connect exists, if there are any logs saved on local. We fetch, send, and delete.
 */
 
+/*
+*  Destructive Behavior: It is possible for the log system to delete the current (Today's Log File)
+*
+*  The Expected Behavior:
+*      (1) Current or Today's File is deleted (Logs are digitally stored on temporary memory -> LogList)
+*      (2) New Logs added the same day are added in a newly created "current" log file.
+*/
+
 public class LogStructure : Singleton<LogStructure>
 {
     #region Singleton Initialization
@@ -40,7 +48,7 @@ public class LogStructure : Singleton<LogStructure>
         _LogList = new List<string>();
 
         // Should a check be added here to see if the log dump has an files inside?
-
+        GetLocalLogs();
     }
     #endregion
 
@@ -52,18 +60,14 @@ public class LogStructure : Singleton<LogStructure>
 
     public static void Log(string log)
     {
-        // If there is no Connection, add it to the buffer
+        // If there is no Connection, add it to the List
         if (!DataAnalytics.GetConnectedState())
-        {
             LogList.Add(log);
-            LogLoader.WriteLogLocal(filePath, log);
-        }
+
         // If there is a Connection, immediately send the log
         else
-            DataAnalytics.AddLog(log);
+            LogLoader.SendLog(LogList, log);
     }
-    
-    
     #endregion
 
     #region Helper Functions
@@ -77,13 +81,27 @@ public class LogStructure : Singleton<LogStructure>
     #region Stop()
     private void Stop()
     {
-        // ON app stop, I have elemetns in and a connected state
+        // if LogList is populated and we have a connection
         if (LogList.Count > 0 && DataAnalytics.GetConnectedState())
         {
-            foreach(string temp in LogList)
+            // For each element in LogList, send a request to DataAnalytics for Log Sending
+            foreach (string temp in LogList)
             {
                 DataAnalytics.AddLog(temp);
             }
+        }
+
+        // Else if LogList is populated and we do not have a connection
+        else if (LogList.Count > 0 && DataAnalyticsStructure.GetConnectedState())
+        {
+            // For each element in LogList, send a request to LogLoader for Local Saving
+            foreach (string temp in LogList)
+            {
+                LogLoader.WriteLogLocal(filePath, temp);
+            }
+
+            // Clear LogList
+            LogList.Clear();
         }
     }
     #endregion
@@ -91,7 +109,28 @@ public class LogStructure : Singleton<LogStructure>
     #region OnApplicationQuit()
     private void OnApplicationQuit()
     {
-        
+        // if LogList is populated and we have a connection
+        if (LogList.Count > 0 && DataAnalytics.GetConnectedState())
+        {
+            // For each element in LogList, send a request to DataAnalytics for Log Sending
+            foreach (string temp in LogList)
+            {
+                DataAnalytics.AddLog(temp);
+            }
+        }
+
+        // Else if LogList is populated and we do not have a connection
+        else if (LogList.Count > 0 && DataAnalyticsStructure.GetConnectedState())
+        {
+            // For each element in LogList, send a request to LogLoader for Local Saving
+            foreach (string temp in LogList)
+            {
+                LogLoader.WriteLogLocal(filePath, temp);
+            }
+
+            // Clear LogList
+            LogList.Clear();
+        }
     }
     #endregion
 }

@@ -8,15 +8,6 @@ using UnityEngine;
 
 public class UDPThreaded
 {
-    /*
-    #region Singleton Initialization
-    [RuntimeInitializeOnLoadMethodAttribute(RuntimeInitializeLoadType.AfterSceneLoad)]
-    public static void InitializeStructure()
-    {
-        InitializeSingleton();
-    }
-    #endregion
-    */
     private UdpClient udpClient;
 
     public readonly Queue<string> incomingQueue;
