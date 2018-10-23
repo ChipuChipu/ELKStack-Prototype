@@ -12,7 +12,7 @@ using UnityEngine;
                 - If Ping.Time == -1, a TimeOut event occured
 */
 
-public class DataAnalytics : Singleton<DataAnalytics>, DataAnalyticsInterface
+public class DataAnalytics : Singleton<DataAnalytics>
 {
     #region Singleton Initialization
     [RuntimeInitializeOnLoadMethodAttribute(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -144,10 +144,10 @@ public class DataAnalytics : Singleton<DataAnalytics>, DataAnalyticsInterface
         This is an overloaded function that allows for an additional step to occur by the
         definitions set by the interface in DataAnalyticsInterface (Name Pending to Change)
     */
-    public void AddLog(string log)
+    public static void AddLog(string log)
     {
-        if (_logList != null && log != null)
-            _logList.Enqueue(log);
+        if (LogList != null && log != null)
+            LogList.Enqueue(log);
     }
     #endregion
 
@@ -155,13 +155,13 @@ public class DataAnalytics : Singleton<DataAnalytics>, DataAnalyticsInterface
     /*
         This function allows for a list of logs to be added onto the logList.
     */
-    public void AddLogList(List<string> list)
+    public static void AddLogList(List<string> list)
     {
-        if (_logList != null && list != null)
+        if (LogList != null && list != null)
         {
             foreach (string temp in list)
             {
-                _logList.Enqueue(temp);
+                LogList.Enqueue(temp);
             }
         }
     }
@@ -172,13 +172,13 @@ public class DataAnalytics : Singleton<DataAnalytics>, DataAnalyticsInterface
         This function will send all logs within the logList while emptying the queue in the process.
         These logs are sent to the Logstash Client running on the server end.
     */
-    public void PostAllLogs()
+    public static void PostAllLogs()
     {
-        if (postRequest && hasConnection && _logList != null && _logList.Count >= 1)
+        if (postRequest && hasConnection && LogList != null && LogList.Count >= 1)
         {
-            while (_logList.Count > 0 && _connection != null)
+            while (LogList.Count > 0 && Connection != null)
             {
-                _connection.Send(_logList.Dequeue());
+                Connection.Send(LogList.Dequeue());
             }
         }
     }

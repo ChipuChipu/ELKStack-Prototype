@@ -29,11 +29,11 @@ public class LogStashDriver : MonoBehaviour
         if (DataAnalytics.GetConnectedState())
         {
             Debug.Log("We are Connected");
-            da.AddLog(firstTestMessage);
-            da.AddLogList(multipleLogEntryExample);
-            da.AddLog("I THINK IT WORKED?");
+            DataAnalytics.AddLog(firstTestMessage);
+            DataAnalytics.AddLogList(multipleLogEntryExample);
+            DataAnalytics.AddLog("I THINK IT WORKED?");
 
-            da.PostAllLogs();
+            DataAnalytics.PostAllLogs();
         }
         else
             Debug.Log("We are not Connected");

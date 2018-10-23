@@ -23,7 +23,7 @@ public class LogStructure : Singleton<LogStructure>
 
     #region Initialization
     public static string fileDirectory = "C:\\Users\\Joshu\\Documents\\GitHub\\ELKStack-Prototype\\Log Dump";
-    public static string filePath = fileDirectory + "\\" + "ErrorLog -- " + DateTime.UtcNow.Date + ".txt";
+    public static string filePath = fileDirectory + "\\" + "ErrorLog -- " + DateTime.UtcNow.Date + ".log";
 
     private List<string> _LogList;
     static List<string> LogList
@@ -45,15 +45,24 @@ public class LogStructure : Singleton<LogStructure>
     #endregion
 
     #region Core Methods
+    public static void GetLocalLogs()
+    {
+        LogList = LogLoader.GetLocalLogs(LogList);
+    }
     public static void Log(string log)
     {
-        LogList.Add(log);
-        LogLoader.Log(filePath, log);
-
-        // Should see if We have Connection. If so, send away. Else, stash it.
-        // Should also see if the log dump has entities. If so, fetch and send.
-        // Empty all files out of the Log Dump after sending.
+        // If there is no Connection, add it to the buffer
+        if (!DataAnalytics.GetConnectedState())
+        {
+            LogList.Add(log);
+            LogLoader.WriteLogLocal(filePath, log);
+        }
+        // If there is a Connection, immediately send the log
+        else
+            DataAnalytics.AddLog(log);
     }
+    
+    
     #endregion
 
     #region Helper Functions
@@ -67,7 +76,14 @@ public class LogStructure : Singleton<LogStructure>
     #region Stop()
     private void Stop()
     {
-
+        // ON app stop, I have elemetns in and a connected state
+        if (LogList.Count > 0 && DataAnalytics.GetConnectedState())
+        {
+            foreach(string temp in LogList)
+            {
+                DataAnalytics.AddLog(temp);
+            }
+        }
     }
     #endregion
 
